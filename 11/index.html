@@ -2,99 +2,98 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Məhəmməd - Rəsmi Bildiriş</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Xətası</title>
     <style>
         body {
-            background-color: #0d0d0d;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: black;
+            color: #00ff00;
+            font-family: monospace;
+            margin: 0;
+            overflow: hidden; /* Sürüşdürməni bağlayır */
             display: flex;
             flex-direction: column;
+            height: 100vh;
+        }
+        #basliq {
+            color: red;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px 5px;
+            border-bottom: 2px dashed red;
+            animation: yanib-sonme 0.8s infinite;
+        }
+        #terminal {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Yazıları həmişə aşağıda tutur */
+        }
+        @keyframes yanib-sonme {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        #baslama-ekrani {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            color: white;
+            display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            font-size: 1.2rem;
+            z-index: 10;
             text-align: center;
-        }
-
-        .container {
-            padding: 20px;
-            border: 2px solid #333;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            width: 80%;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: #ff4d4d;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .info {
-            font-size: 18px;
-            color: #ccc;
-            margin-bottom: 30px;
-        }
-
-        .decision {
-            font-weight: bold;
-            color: #00d4ff;
-            border-top: 1px dashed #555;
-            padding-top: 20px;
-        }
-
-        #qacan-yazi {
-            position: absolute;
-            padding: 15px 30px;
-            background: #ff4d4d;
-            color: white;
-            font-weight: bold;
-            border-radius: 50px;
-            border: none;
-            touch-action: none;
-            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>SON ZƏNGƏ HƏLƏ ÇOX VAR! 🔔</h1>
-        <p class="info">BLOKDAN ZEİF YIĞSAZ SON ZENG YADIZA DÜŞMEYECEK.</p>
-        
-        <div class="decision">
-            ⚠️ Məhəmməd qərarını 1 ay ərzində deyəcək.
-        </div>
+    <div id="baslama-ekrani" onclick="basla()">
+        Səhifəni yükləmək üçün ekrana toxunun
     </div>
 
-    <button id="qacan-yazi">Etiraz Et!</button>
+    <div id="basliq">
+        ⚠ KRİTİK XƏTA: SİSTEMƏ MÜDAXİLƏ! ⚠<br>
+        BÜTÜN FAYLLAR MƏHƏMMƏD TƏRƏFİNDƏN ŞİFRƏLƏNDİ.
+    </div>
+    
+    <div id="terminal"></div>
 
     <script>
-        const btn = document.getElementById('qacan-yazi');
-        
-        const qacirt = () => {
-            const x = Math.random() * (window.innerWidth - btn.clientWidth);
-            const y = Math.random() * (window.innerHeight - btn.clientHeight);
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
-        };
+        function basla() {
+            // Başlama ekranını gizlət və tam ekrana keç
+            document.getElementById('baslama-ekrani').style.display = 'none';
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                }
+            } catch(e) {}
 
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            qacirt();
-        });
-
-        btn.addEventListener('mouseover', qacirt);
-
-        btn.addEventListener('click', () => {
-            alert("Etiraz qəbul olunmadı! Gözləməkdə qalın.");
-        });
+            const terminal = document.getElementById('terminal');
+            const qovluqlar = ['DCIM/Camera', 'WhatsApp/Media', 'Download', 'Pictures/Screenshots', 'Documents'];
+            const uzantilar = ['.jpg', '.mp4', '.pdf', '.db', '.txt', '.png'];
+            
+            setInterval(() => {
+                const qovluq = qovluqlar[Math.floor(Math.random() * qovluqlar.length)];
+                const uzanti = uzantilar[Math.floor(Math.random() * uzantilar.length)];
+                const faylAdi = 'FILE_' + Math.floor(Math.random() * 9999999) + uzanti;
+                const hecm = (Math.random() * 45).toFixed(1);
+                
+                const yeniSetir = document.createElement('div');
+                yeniSetir.innerHTML = `[+] /storage/emulated/0/${qovluq}/${faylAdi} (${hecm}MB) <span style="color:red;">ŞİFRƏLƏNDİ</span>`;
+                terminal.appendChild(yeniSetir);
+                
+                // Telefon donmasın deyə ekranda maksimum 25 sətir saxlayır
+                if (terminal.childElementCount > 25) {
+                    terminal.removeChild(terminal.firstChild);
+                }
+            }, 100); // Sürəti burdan tənzimləyə bilərsən
+        }
     </script>
-
 </body>
 </html>
