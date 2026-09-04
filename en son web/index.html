@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDR TECH - Gaming & Tech Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="social-links" id="socialLinksBox">
+  <a href="#" title="Instagram" id="socialInstagram">
+    <img src="Instagram_icon.png" alt="Instagram">
+  </a>
+  <a href="#" title="TikTok" id="socialTiktok">
+    <img src="tiktok-icon.png" alt="TikTok">
+  </a>
+  <a href="#" title="Discord" id="socialDiscord">
+    <img src="Discord_icon.jpg" alt="Discord">
+  </a>
+  <a href="#" title="X (Twitter)" id="socialX">
+    <img src="X_icon.jpg" alt="X">
+  </a>
+  <span id="contactPhoneBox" class="contact-phone-box" style="display:none;"></span>
+</div>
+  <div class="top-settings">
+                <button id="themeToggleBtn" class="theme-btn" title="Gece / Gündüz">
+                    <span class="icon-sun">☀️</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+                <select id="langSelect" class="top-select">
+                    <option value="az">AZ</option>
+                    <option value="en">EN</option>
+                    <option value="ru">RU</option>
+                </select>
+                <select id="currencySelect" class="top-select">
+                    <option value="azn">₼ AZN</option>
+                    <option value="usd">$ USD</option>
+                    <option value="eur">€ EUR</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo" id="siteLogoLink">
+                SDR <span>TECH</span>
+            </a>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Oyun, avadanlıq və ya pin axtar...">
+                <button class="search-btn">🔍</button>
+            </div>
+            <div class="header-actions">
+                <button id="authModalBtn" class="btn btn-outline">Daxil ol</button>
+
+                <div class="user-profile-menu" id="userProfileMenu" style="display:none;">
+                    <button id="profileDropdownBtn" class="profile-btn">
+                        <span class="user-avatar" id="headerUserAvatar">👤</span>
+                        <span id="userNameDisplay">İstifadəçi</span>
+                        <span class="arrow-down">▾</span>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="admin.html" id="adminPanelLink" style="display:none; color:#3b82f6; font-weight:bold;">⚙️ Admin Panel</a>
+                        <div class="dropdown-divider" id="adminDivider" style="display:none;"></div>
+                        <a href="profile.html">🐸​ Profilim</a>
+                        <a href="balans.html">💰 Balansım</a>
+                        <a href="sifarisler.html" id="myOrdersBtn">📦 Sifarişlərim</a>
+                        <a href="bonuslarim.html">🎁 Bonuslarım</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="logout-link">🚪 Çıxış et</a>
+                    </div>
+                </div>
+
+                <div class="cart-box" id="cartBtn">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-badge" id="cartCount">0</span>
+                    <span class="cart-price" id="cartTotalPrice">₼0.00</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="nav-bar">
+        <div class="container nav-content">
+            <ul class="main-menu">
+                <li><a href="index.html" class="active">Ana Səhifə</a></li>
+                <li><a href="oyunlar.html">Oyunlar</a></li>
+                <li><a href="avadanliqlar.html">Oyunçu Əşyaları</a></li>
+                <li><a href="pinler.html">Rəqəmsal Kodlar / Pin-lər</a></li>
+                <li><a href="tekliflar.html">Xüsusi Təkliflər</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="breadcrumb-bar">
+        <div class="container">
+            <div class="breadcrumb" id="breadcrumbTrail">
+               <a href="index.html" class="">
+  <img src="home.jpg" alt="Home" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+  Ana Səhifə
+</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="container main-layout">
+       <section class="hero-banner">
+    <div class="banner-slider-wrap">
+        <button type="button" class="banner-slider-arrow banner-prev" id="bannerPrevBtn" aria-label="Əvvəlki">‹</button>
+        <div class="banner-slider-track" id="bannerSliderTrack"></div>
+        <button type="button" class="banner-slider-arrow banner-next" id="bannerNextBtn" aria-label="Növbəti">›</button>
+        <div class="banner-slider-dots" id="bannerSliderDots"></div>
+    </div>
+</section>
+
+        <section class="products-section" id="products">
+            <div class="section-header">
+                <h2>Seçilmiş Məhsullar</h2>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box">
+            <button class="modal-close" id="closeAuthModal">&times;</button>
+            <div class="modal-tabs">
+                <button class="tab-btn active" id="tabLogin">Daxil ol</button>
+                <button class="tab-btn" id="tabRegister">Qeydiyyat</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <p class="form-error" id="loginError" style="display:none;"></p>
+                <div class="form-group">
+                    <label>E-poçt</label>
+                    <input type="text" id="loginEmail" required placeholder="E-poçt ünvanınızı daxil edin">
+                </div>
+                <div class="form-group">
+                    <label>Şifrə</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" required placeholder="********">
+                        <button type="button" class="toggle-password" data-target="loginPassword">👁️</button>
+                    </div>
+                </div>
+                <div class="forgot-link-wrap"><a href="#" id="forgotLink">Şifrəni unutmusan?</a></div>
+                <button type="submit" class="btn btn-primary btn-block">Daxil ol</button>
+            </form>
+
+            <form id="registerForm" class="auth-form">
+                <p class="form-error" id="registerError" style="display:none;"></p>
+                <div class="form-group">
+                    <label>Tam Adınız</label>
+                    <input type="text" id="registerName" required placeholder="Ad və Soyad">
+                </div>
+                <div class="form-group">
+                    <label>E-poçt Ünvanı</label>
+                    <input type="email" id="registerEmail" required placeholder="nümunə@sdr.az">
+                </div>
+                <div class="form-group">
+                    <label>Şifrə</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registerPassword" required placeholder="********" minlength="4">
+                        <button type="button" class="toggle-password" data-target="registerPassword">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group phone-input-wrap">
+                    <label>Əlaqə Nömrəsi</label>
+                    <input type="tel" id="registerPhone" required value="+994" placeholder="+994 XX XXX XX XX">
+                </div>
+                <div class="form-group terms-checkbox-row">
+                    <label class="terms-checkbox-label">
+                        <input type="checkbox" id="registerTermsCheckbox" required>
+                        <span>Mən <a href="#" id="viewTermsLink">Qaydalar və Şərtləri</a> oxudum və qəbul edirəm</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Qeydiyyatı Tamamla</button>
+            </form>
+
+            <div id="forgotView">
+                <h3 style="margin-bottom:16px; font-size:1.1rem;">Şifrəni Yenilə</h3>
+                <form id="forgotForm">
+                    <p class="form-error" id="forgotError" style="display:none;"></p>
+                    <p class="form-success" id="forgotSuccess" style="display:none;"></p>
+                    <div class="form-group">
+                        <label>Qeydiyyatdaki E-poçt</label>
+                        <input type="email" id="forgotEmail" required placeholder="nümunə@sdr.az">
+                    </div>
+                    <div class="form-group">
+                        <label>Tam Adınız (təsdiq üçün)</label>
+                        <input type="text" id="forgotName" required placeholder="Qeydiyyatda daxil etdiyiniz ad">
+                    </div>
+                    <div class="form-group">
+                        <label>Yeni Şifrə</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="forgotNewPassword" required placeholder="********" minlength="4">
+                            <button type="button" class="toggle-password" data-target="forgotNewPassword">👁️</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Şifrəni Yenilə</button>
+                </form>
+                <div class="forgot-link-wrap" style="text-align:center; margin-top:14px;">
+                    <a href="#" id="backToLoginLink" class="back-to-login">← Girişə qayıt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal-overlay" id="logoutConfirmModal">
+        <div class="modal-box logout-confirm-box">
+            <div class="logout-confirm-icon">🚪</div>
+            <h3>Hesabdan çıxış edirsiniz</h3>
+            <p>Hesabınızdan çıxış etməyinizə əminsiniz?</p>
+            <div class="logout-confirm-actions">
+                <button type="button" class="logout-confirm-cancel" id="logoutConfirmCancel">Ləğv et</button>
+                <button type="button" class="logout-confirm-yes" id="logoutConfirmYes">Bəli, Çıxış et</button>
+            </div>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-sidebar-header">
+            <h3>🛒 Səbətim</h3>
+            <button class="modal-close" id="closeCartBtn">&times;</button>
+        </div>
+        <div class="cart-sidebar-body" id="cartItemsList"></div>
+        <div class="cart-sidebar-footer">
+            <div class="coupon-box">
+                <input type="text" id="couponInput" placeholder="Promokod">
+                <button type="button" class="btn btn-outline" id="applyCouponBtn">Tətbiq et</button>
+            </div>
+            <p class="cart-message" id="couponMessage"></p>
+            <p class="cart-message" id="cartMessage"></p>
+            <div class="cart-total-row" id="cartDiscountRow" style="display:none; color:#22c55e; font-size:0.85rem;">
+                <span>Endirim:</span>
+                <span id="cartDiscountAmount">-₼0.00</span>
+            </div>
+            <div class="cart-total-row">
+                <span>Cəmi:</span>
+                <span id="cartSidebarTotal">₼0.00</span>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkoutBtn">Sifarişi Tamamla</button>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container footer-content">
+            <p id="footerCopyright">&copy; 2026 SDR TECH. Bütün hüquqlar qorunur.</p>
+            <p id="footerContactLine" style="display:none; margin-top:6px; font-size:0.85rem; color:var(--text-muted);"></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+
+<div class="chat-widget">
+    <button id="chatToggleBtn" class="chat-toggle-btn">
+        <span class="chat-icon">💬</span>
+        <span class="chat-badge" id="chatBadge">1</span>
+    </button>
+    <div id="chatBox" class="chat-box">
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <span class="status-dot"></span>
+                <div>
+                    <h4>SDR TECH Dəstək</h4>
+                    <small>Onlayn | Cavab müddəti: 1-2 dəq</small>
+                </div>
+            </div>
+            <button id="closeChatBtn" class="close-chat">&times;</button>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message system-msg">
+                <p>Xoş gəldiniz! 👋 Sizə necə kömək edə bilərik?</p>
+                <span class="msg-time">İndi</span>
+            </div>
+        </div>
+        <form id="chatForm" class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." required autocomplete="off">
+            <button type="submit" class="send-btn">➔</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

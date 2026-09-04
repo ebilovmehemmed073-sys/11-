@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="az" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oyun ID Yükləmə - SDR TECH</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           OYUN ID YÜKLƏMƏ SƏHİFƏSİ — sayt CSS dəyişənlərinə uyğunlaşdırılıb
+           (--primary, --bg-card, --bg-main, --border-color, --text-color, --text-muted saytın öz theme.css-indən gəlir)
+           ============================================ */
+        .topup-page-title {
+            text-align: center;
+            padding: 26px 16px 4px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: var(--text-color);
+        }
+        .topup-page-title span { color: var(--primary); }
+
+        .topup-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 10px 0 40px;
+        }
+
+        /* SOL PANEL: OYUN SİYAHISI */
+        .game-sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px 12px;
+            position: sticky;
+            top: 20px;
+        }
+        .game-sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 4px 10px 14px;
+        }
+        .game-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: var(--bg-main);
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .game-item:hover { border-color: var(--border-color); }
+        .game-item.active {
+            background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 18%, transparent), transparent);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+        .game-icon {
+            width: 42px; height: 42px; min-width: 42px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+        }
+        .game-item-name { flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--text-color); }
+        .game-arrow-btn {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            transition: all 0.18s ease;
+        }
+        .game-item.active .game-arrow-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* SAĞ PANEL */
+        .product-panel-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .product-panel-header .game-icon { width: 54px; height: 54px; font-size: 1.6rem; }
+        .product-panel-header h2 { margin: 0; font-size: 1.2rem; color: var(--text-color); }
+        .product-panel-header p { margin: 2px 0 0; color: var(--text-muted); font-size: 0.85rem; }
+
+        .id-input-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+        }
+        .id-input-box-title {
+            font-size: 0.85rem; font-weight: 700; color: var(--primary);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        }
+        .id-fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .id-fields-row.single { grid-template-columns: 1fr; }
+        .id-field-group label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+        .id-field-group label .required-star { color: #ef4444; }
+        .id-field-group input {
+            width: 100%; padding: 10px 14px; border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main); color: var(--text-color);
+            font-size: 0.9rem; outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .id-field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent); }
+        .id-field-group input.invalid { border-color: #ef4444; animation: shakeField 0.35s ease; }
+        .id-field-error { color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; }
+        @keyframes shakeField { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .product-grid-topup { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+        .topup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex; align-items: center; gap: 12px;
+            transition: border-color 0.18s ease, transform 0.15s ease;
+        }
+        .topup-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+        .product-icon {
+            width: 50px; height: 50px; min-width: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            background: color-mix(in srgb, var(--primary) 12%, transparent);
+            border: 1px solid var(--border-color);
+        }
+        .product-mid { flex: 1; min-width: 0; }
+        .product-mid .p-name { font-weight: 700; font-size: 0.88rem; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-mid .p-price { color: #22c55e; font-weight: 800; font-size: 0.92rem; margin-top: 4px; }
+
+        .product-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+        .qty-stepper { display: flex; align-items: center; gap: 6px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 20px; padding: 3px; }
+        .qty-stepper button {
+            width: 22px; height: 22px; border-radius: 50%; border: none;
+            background: color-mix(in srgb, var(--primary) 16%, transparent);
+            color: var(--text-color); font-size: 0.88rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; line-height: 1;
+        }
+        .qty-stepper button:hover { background: var(--primary); color: #fff; }
+        .qty-stepper span { min-width: 16px; text-align: center; font-size: 0.83rem; font-weight: 700; color: var(--text-color); }
+
+        .add-cart-circle-btn {
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: var(--primary); color: #fff; font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.15s ease;
+        }
+        .add-cart-circle-btn:hover { transform: scale(1.08); background: var(--primary-hover); }
+        .add-cart-circle-btn:active { transform: scale(0.94); }
+
+        .view-all-card {
+            grid-column: 1 / -1;
+            background: color-mix(in srgb, var(--primary) 8%, transparent);
+            border: 1px dashed var(--primary);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .view-all-card a { color: var(--primary); font-weight: 800; text-decoration: none; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; }
+        .view-all-card a:hover { text-decoration: underline; }
+
+        @media (max-width: 820px) {
+            .topup-wrapper { grid-template-columns: 1fr; }
+            .game-sidebar { position: relative; top: 0; }
+            .game-list { flex-direction: row; overflow-x: auto; padding-bottom: 6px; }
+            .game-item { min-width: 190px; }
+            .id-fields-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .product-grid-topup { grid-template-columns: 1fr; }
+            .topup-card { flex-wrap: wrap; }
+            .product-right { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; margin-top: 8px; }
+        }
+    </style>
+</head>
+<body data-page="game-topup">
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="social-links" id="socialLinksBox">
+  <a href="#" title="Instagram" id="socialInstagram">
+    <img src="Instagram_icon.png" alt="Instagram">
+  </a>
+  <a href="#" title="TikTok" id="socialTiktok">
+    <img src="tiktok-icon.png" alt="TikTok">
+  </a>
+  <a href="#" title="Discord" id="socialDiscord">
+    <img src="Discord_icon.jpg" alt="Discord">
+  </a>
+  <a href="#" title="X (Twitter)" id="socialX">
+    <img src="X_icon.jpg" alt="X">
+  </a>
+  <span id="contactPhoneBox" class="contact-phone-box" style="display:none;"></span>
+</div>
+  <div class="top-settings">
+                <button id="themeToggleBtn" class="theme-btn" title="Gece / Gündüz">
+                    <span class="icon-sun">☀️</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+                <select id="langSelect" class="top-select">
+                    <option value="az">AZ</option>
+                    <option value="en">EN</option>
+                    <option value="ru">RU</option>
+                </select>
+                <select id="currencySelect" class="top-select">
+                    <option value="azn">₼ AZN</option>
+                    <option value="usd">$ USD</option>
+                    <option value="eur">€ EUR</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo" id="siteLogoLink">
+                SDR <span>TECH</span>
+            </a>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Oyun, avadanlıq və ya pin axtar...">
+                <button class="search-btn">🔍</button>
+            </div>
+            <div class="header-actions">
+                <button id="authModalBtn" class="btn btn-outline">Daxil ol</button>
+
+                <div class="user-profile-menu" id="userProfileMenu" style="display:none;">
+                    <button id="profileDropdownBtn" class="profile-btn">
+                        <span class="user-avatar" id="headerUserAvatar">👤</span>
+                        <span id="userNameDisplay">İstifadəçi</span>
+                        <span class="arrow-down">▾</span>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="admin.html" id="adminPanelLink" style="display:none; color:#3b82f6; font-weight:bold;">⚙️ Admin Panel</a>
+                        <div class="dropdown-divider" id="adminDivider" style="display:none;"></div>
+                        <a href="profile.html">🐸​ Profilim</a>
+                        <a href="balans.html">💰 Balansım</a>
+                        <a href="sifarisler.html">📦 Sifarişlərim</a>
+                        <a href="bonuslarim.html">🎁 Bonuslarım</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="logout-link">🚪 Çıxış et</a>
+                    </div>
+                </div>
+
+                <div class="cart-box" id="cartBtn">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-badge" id="cartCount">0</span>
+                    <span class="cart-price" id="cartTotalPrice">₼0.00</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="nav-bar">
+        <div class="container nav-content">
+            <ul class="main-menu">
+                <li><a href="index.html">Ana Səhifə</a></li>
+                <li><a href="oyunlar.html" class="active">Oyunlar</a></li>
+                <li><a href="avadanliqlar.html">Oyunçu Əşyaları</a></li>
+                <li><a href="pinler.html">Rəqəmsal Kodlar / Pin-lər</a></li>
+                <li><a href="tekliflar.html">Xüsusi Təkliflər</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="breadcrumb-bar">
+        <div class="container">
+            <div class="breadcrumb" id="breadcrumbTrail">
+               <a href="index.html" class="">
+  <img src="home.jpg" alt="Home" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+  Ana Səhifə
+</a> <span style="color:var(--text-muted); margin:0 6px;">/</span> Oyunlar
+            </div>
+        </div>
+    </div>
+
+    <main class="container main-layout">
+        <h1 class="topup-page-title">🎮 Oyun <span>ID Yükləmə</span> Mərkəzi</h1>
+
+        <div class="topup-wrapper">
+            <!-- SOL PANEL: OYUN SİYAHISI -->
+            <aside class="game-sidebar">
+                <div class="game-sidebar-title">OYUNLAR</div>
+                <ul class="game-list" id="gameList"></ul>
+            </aside>
+
+            <!-- SAĞ PANEL: MƏHSULLAR -->
+            <section>
+                <div class="product-panel-header">
+                    <div class="game-icon" id="activeGameIcon"></div>
+                    <div>
+                        <h2 id="activeGameName"></h2>
+                        <p>Paket seçin, ID-nizi daxil edin və dərhal yükləyin</p>
+                    </div>
+                </div>
+
+                <div class="id-input-box">
+                    <div class="id-input-box-title">🔒 Hesab Məlumatları (Məcburi)</div>
+                    <div class="id-fields-row" id="idFieldsRow"></div>
+                </div>
+
+                <div class="product-grid-topup" id="productGridTopup"></div>
+            </section>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box">
+            <button class="modal-close" id="closeAuthModal">&times;</button>
+            <div class="modal-tabs">
+                <button class="tab-btn active" id="tabLogin">Daxil ol</button>
+                <button class="tab-btn" id="tabRegister">Qeydiyyat</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <p class="form-error" id="loginError" style="display:none;"></p>
+                <div class="form-group">
+                    <label>E-poçt</label>
+                    <input type="text" id="loginEmail" required placeholder="E-poçt ünvanınızı daxil edin">
+                </div>
+                <div class="form-group">
+                    <label>Şifrə</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" required placeholder="********">
+                        <button type="button" class="toggle-password" data-target="loginPassword">👁️</button>
+                    </div>
+                </div>
+                <div class="forgot-link-wrap"><a href="#" id="forgotLink">Şifrəni unutmusan?</a></div>
+                <button type="submit" class="btn btn-primary btn-block">Daxil ol</button>
+            </form>
+
+            <form id="registerForm" class="auth-form">
+                <p class="form-error" id="registerError" style="display:none;"></p>
+                <div class="form-group">
+                    <label>Tam Adınız</label>
+                    <input type="text" id="registerName" required placeholder="Ad və Soyad">
+                </div>
+                <div class="form-group">
+                    <label>E-poçt Ünvanı</label>
+                    <input type="email" id="registerEmail" required placeholder="nümunə@sdr.az">
+                </div>
+                <div class="form-group">
+                    <label>Şifrə</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="registerPassword" required placeholder="********" minlength="4">
+                        <button type="button" class="toggle-password" data-target="registerPassword">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group phone-input-wrap">
+                    <label>Əlaqə Nömrəsi</label>
+                    <input type="tel" id="registerPhone" required value="+994" placeholder="+994 XX XXX XX XX">
+                </div>
+                <div class="form-group terms-checkbox-row">
+                    <label class="terms-checkbox-label">
+                        <input type="checkbox" id="registerTermsCheckbox" required>
+                        <span>Mən <a href="#" id="viewTermsLink">Qaydalar və Şərtləri</a> oxudum və qəbul edirəm</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Qeydiyyatı Tamamla</button>
+            </form>
+
+            <div id="forgotView">
+                <h3 style="margin-bottom:16px; font-size:1.1rem;">Şifrəni Yenilə</h3>
+                <form id="forgotForm">
+                    <p class="form-error" id="forgotError" style="display:none;"></p>
+                    <p class="form-success" id="forgotSuccess" style="display:none;"></p>
+                    <div class="form-group">
+                        <label>Qeydiyyatdaki E-poçt</label>
+                        <input type="email" id="forgotEmail" required placeholder="nümunə@sdr.az">
+                    </div>
+                    <div class="form-group">
+                        <label>Tam Adınız (təsdiq üçün)</label>
+                        <input type="text" id="forgotName" required placeholder="Qeydiyyatda daxil etdiyiniz ad">
+                    </div>
+                    <div class="form-group">
+                        <label>Yeni Şifrə</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="forgotNewPassword" required placeholder="********" minlength="4">
+                            <button type="button" class="toggle-password" data-target="forgotNewPassword">👁️</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Şifrəni Yenilə</button>
+                </form>
+                <div class="forgot-link-wrap" style="text-align:center; margin-top:14px;">
+                    <a href="#" id="backToLoginLink" class="back-to-login">← Girişə qayıt</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal-overlay" id="logoutConfirmModal">
+        <div class="modal-box logout-confirm-box">
+            <div class="logout-confirm-icon">🚪</div>
+            <h3>Hesabdan çıxış edirsiniz</h3>
+            <p>Hesabınızdan çıxış etməyinizə əminsiniz?</p>
+            <div class="logout-confirm-actions">
+                <button type="button" class="logout-confirm-cancel" id="logoutConfirmCancel">Ləğv et</button>
+                <button type="button" class="logout-confirm-yes" id="logoutConfirmYes">Bəli, Çıxış et</button>
+            </div>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-sidebar-header">
+            <h3>🛒 Səbətim</h3>
+            <button class="modal-close" id="closeCartBtn">&times;</button>
+        </div>
+        <div class="cart-sidebar-body" id="cartItemsList"></div>
+        <div class="cart-sidebar-footer">
+            <div class="coupon-box">
+                <input type="text" id="couponInput" placeholder="Promokod">
+                <button type="button" class="btn btn-outline" id="applyCouponBtn">Tətbiq et</button>
+            </div>
+            <p class="cart-message" id="couponMessage"></p>
+            <p class="cart-message" id="cartMessage"></p>
+            <div class="cart-total-row" id="cartDiscountRow" style="display:none; color:#22c55e; font-size:0.85rem;">
+                <span>Endirim:</span>
+                <span id="cartDiscountAmount">-₼0.00</span>
+            </div>
+            <div class="cart-total-row">
+                <span>Cəmi:</span>
+                <span id="cartSidebarTotal">₼0.00</span>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkoutBtn">Sifarişi Tamamla</button>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container footer-content">
+            <p id="footerCopyright">&copy; 2026 SDR TECH. Bütün hüquqlar qorunur.</p>
+            <p id="footerContactLine" style="display:none; margin-top:6px; font-size:0.85rem; color:var(--text-muted);"></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+
+<div class="chat-widget">
+    <button id="chatToggleBtn" class="chat-toggle-btn">
+        <span class="chat-icon">💬</span>
+        <span class="chat-badge" id="chatBadge">1</span>
+    </button>
+    <div id="chatBox" class="chat-box">
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <span class="status-dot"></span>
+                <div>
+                    <h4>SDR TECH Dəstək</h4>
+                    <small>Onlayn | Cavab müddəti: 1-2 dəq</small>
+                </div>
+            </div>
+            <button id="closeChatBtn" class="close-chat">&times;</button>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message system-msg">
+                <p>Xoş gəldiniz! 👋 Sizə necə kömək edə bilərik?</p>
+                <span class="msg-time">İndi</span>
+            </div>
+        </div>
+        <form id="chatForm" class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." required autocomplete="off">
+            <button type="submit" class="send-btn">➔</button>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    const GAMES = [
+        {
+            id: "pubgm", name: "PUBG Mobile", emoji: "🎯", color: "#ff8a3d",
+            idFields: [{ key: "playerId", label: "PUBG Player ID", placeholder: "Player ID daxil edin" }],
+            products: [
+                { id: "pubg-60", name: "60 UC", price: 1.80, emoji: "🪙" },
+                { id: "pubg-325", name: "325 UC", price: 8.50, emoji: "🪙" },
+                { id: "pubg-660", name: "660 UC", price: 16.00, emoji: "🪙" },
+                { id: "pubg-1800", name: "1800 UC", price: 42.00, emoji: "💰" },
+                { id: "pubg-3850", name: "3850 UC", price: 85.00, emoji: "💰" },
+                { id: "pubg-8100", name: "8100 UC", price: 168.00, emoji: "👑" }
+            ]
+        },
+        {
+            id: "codm", name: "Call of Duty Mobile", emoji: "🪖", color: "#5b8bf7",
+            idFields: [{ key: "uid", label: "COD Mobile UID", placeholder: "UID daxil edin" }],
+            products: [
+                { id: "codm-80", name: "80 CP", price: 2.20, emoji: "🪙" },
+                { id: "codm-420", name: "420 CP", price: 10.50, emoji: "🪙" },
+                { id: "codm-880", name: "880 CP", price: 20.00, emoji: "💰" },
+                { id: "codm-2400", name: "2400 CP", price: 52.00, emoji: "💰" },
+                { id: "codm-5000", name: "5000 CP", price: 105.00, emoji: "👑" },
+                { id: "codm-10800", name: "10800 CP", price: 210.00, emoji: "👑" }
+            ]
+        },
+        {
+            id: "freefire", name: "Free Fire", emoji: "🔥", color: "#f6a63a",
+            idFields: [{ key: "playerId", label: "Free Fire Player ID", placeholder: "Player ID daxil edin" }],
+            products: [
+                { id: "ff-100", name: "100 Almaz", price: 1.90, emoji: "💎" },
+                { id: "ff-310", name: "310 Almaz", price: 5.50, emoji: "💎" },
+                { id: "ff-520", name: "520 Almaz", price: 9.00, emoji: "💎" },
+                { id: "ff-1080", name: "1080 Almaz", price: 18.50, emoji: "💎" },
+                { id: "ff-2200", name: "2200 Almaz", price: 36.00, emoji: "👑" },
+                { id: "ff-5600", name: "5600 Almaz", price: 88.00, emoji: "👑" }
+            ]
+        },
+        {
+            id: "pointblank", name: "Point Blank", emoji: "🎯", color: "#ef5b6c",
+            idFields: [{ key: "username", label: "Hesab / İstifadəçi Adı", placeholder: "İstifadəçi adınızı daxil edin" }],
+            products: [
+                { id: "pb-1000", name: "1000 PB Point", price: 3.00, emoji: "🪙" },
+                { id: "pb-3000", name: "3000 PB Point", price: 8.50, emoji: "🪙" },
+                { id: "pb-6000", name: "6000 PB Point", price: 16.50, emoji: "💰" },
+                { id: "pb-12000", name: "12000 PB Point", price: 32.00, emoji: "💰" }
+            ]
+        },
+        {
+            id: "efootball", name: "eFootball", emoji: "⚽", color: "#3ddc84",
+            idFields: [{ key: "playerId", label: "eFootball Player ID", placeholder: "Player ID daxil edin" }],
+            products: [
+                { id: "ef-1050", name: "1050 Coin", price: 9.50, emoji: "🪙" },
+                { id: "ef-2200", name: "2200 Coin", price: 19.00, emoji: "🪙" },
+                { id: "ef-5900", name: "5900 Coin", price: 47.00, emoji: "💰" },
+                { id: "ef-12500", name: "12500 Coin", price: 92.00, emoji: "👑" }
+            ]
+        },
+        {
+            id: "mlbb", name: "Mobile Legends", emoji: "🛡️", color: "#b06cf7",
+            idFields: [
+                { key: "userId", label: "User ID", placeholder: "User ID" },
+                { key: "zoneId", label: "Zone ID", placeholder: "Zone ID" }
+            ],
+            products: [
+                { id: "mlbb-86", name: "86 Almaz", price: 2.00, emoji: "💎" },
+                { id: "mlbb-172", name: "172 Almaz", price: 3.90, emoji: "💎" },
+                { id: "mlbb-257", name: "257 Almaz", price: 5.70, emoji: "💎" },
+                { id: "mlbb-706", name: "706 Almaz", price: 15.00, emoji: "💎" },
+                { id: "mlbb-2195", name: "2195 Almaz", price: 44.00, emoji: "👑" }
+            ]
+        }
+    ];
+
+    let activeGameId = GAMES[0].id;
+    const idValuesByGame = {};
+    const qtyByProduct = {};
+
+    function getGame(id) { return GAMES.find(g => g.id === id); }
+
+    const gameListEl = document.getElementById("gameList");
+    function renderGameList() {
+        gameListEl.innerHTML = GAMES.map(g => `
+            <li class="game-item ${g.id === activeGameId ? 'active' : ''}" data-game="${g.id}">
+                <div class="game-icon" style="background:${g.color};">${g.emoji}</div>
+                <span class="game-item-name">${g.name}</span>
+                <span class="game-arrow-btn">›</span>
+            </li>
+        `).join("");
+    }
+    gameListEl.addEventListener("click", (e) => {
+        const item = e.target.closest(".game-item");
+        if (!item) return;
+        activeGameId = item.getAttribute("data-game");
+        renderAll();
+    });
+
+    const activeGameIcon = document.getElementById("activeGameIcon");
+    const activeGameName = document.getElementById("activeGameName");
+    const idFieldsRow = document.getElementById("idFieldsRow");
+
+    function renderHeaderAndIdFields() {
+        const game = getGame(activeGameId);
+        activeGameIcon.style.background = game.color;
+        activeGameIcon.textContent = game.emoji;
+        activeGameName.textContent = game.name;
+
+        idValuesByGame[game.id] = idValuesByGame[game.id] || {};
+
+        idFieldsRow.className = "id-fields-row" + (game.idFields.length === 1 ? " single" : "");
+        idFieldsRow.innerHTML = game.idFields.map(f => `
+            <div class="id-field-group">
+                <label for="idf-${f.key}">${f.label} <span class="required-star">*</span></label>
+                <input type="text" id="idf-${f.key}" data-key="${f.key}"
+                       placeholder="${f.placeholder}"
+                       value="${idValuesByGame[game.id][f.key] || ''}">
+                <div class="id-field-error" data-error-for="${f.key}">Bu xana məcburidir.</div>
+            </div>
+        `).join("");
+
+        idFieldsRow.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", () => {
+                idValuesByGame[game.id][input.getAttribute("data-key")] = input.value.trim();
+                clearFieldError(input);
+            });
+        });
+    }
+
+    function clearFieldError(input) {
+        input.classList.remove("invalid");
+        const err = idFieldsRow.querySelector(`.id-field-error[data-error-for="${input.getAttribute('data-key')}"]`);
+        if (err) err.style.display = "none";
+    }
+
+    function validateIdFields(game) {
+        let allValid = true;
+        game.idFields.forEach(f => {
+            const val = (idValuesByGame[game.id] && idValuesByGame[game.id][f.key]) || "";
+            const input = document.getElementById("idf-" + f.key);
+            const err = idFieldsRow.querySelector(`.id-field-error[data-error-for="${f.key}"]`);
+            if (!val) {
+                allValid = false;
+                if (input) input.classList.add("invalid");
+                if (err) err.style.display = "block";
+            }
+        });
+        return allValid;
+    }
+
+    const productGridTopup = document.getElementById("productGridTopup");
+
+    function renderProductGrid() {
+        const game = getGame(activeGameId);
+        const cardsHtml = game.products.map(p => {
+            const qty = qtyByProduct[p.id] || 1;
+            return `
+            <div class="topup-card" data-product="${p.id}">
+                <div class="product-icon">${p.emoji}</div>
+                <div class="product-mid">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price.toFixed(2)} AZN</div>
+                </div>
+                <div class="product-right">
+                    <div class="qty-stepper">
+                        <button type="button" data-action="dec" data-id="${p.id}">−</button>
+                        <span data-qty-for="${p.id}">${qty}</span>
+                        <button type="button" data-action="inc" data-id="${p.id}">+</button>
+                    </div>
+                    <button type="button" class="add-cart-circle-btn" data-action="add" data-id="${p.id}" title="Səbətə at">🛒</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+
+        productGridTopup.innerHTML = cardsHtml + `
+            <div class="view-all-card">
+                <a href="pinler.html">Digər Rəqəmsal Kodlara Bax →</a>
+            </div>
+        `;
+    }
+
+    productGridTopup.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const id = btn.getAttribute("data-id");
+        const action = btn.getAttribute("data-action");
+        const game = getGame(activeGameId);
+        const product = game.products.find(p => p.id === id);
+        if (!product) return;
+
+        if (action === "inc" || action === "dec") {
+            let qty = qtyByProduct[id] || 1;
+            qty = action === "inc" ? Math.min(10, qty + 1) : Math.max(1, qty - 1);
+            qtyByProduct[id] = qty;
+            const span = productGridTopup.querySelector(`[data-qty-for="${id}"]`);
+            if (span) span.textContent = qty;
+        }
+
+        if (action === "add") {
+            // Saytın öz giriş sistemindən istifadə edir
+            if (typeof window.isUserLoggedIn === 'function' && !window.isUserLoggedIn()) {
+                if (window.showToast) window.showToast('Səbətə əlavə etmək üçün əvvəlcə daxil olun.', 'error');
+                if (typeof window.openSiteAuthModal === 'function') window.openSiteAuthModal();
+                return;
+            }
+            const valid = validateIdFields(game);
+            if (!valid) {
+                if (window.showToast) window.showToast('⚠️ Zəhmət olmasa məcburi ID xana(lar)ını doldurun.', 'error');
+                return;
+            }
+            const qty = qtyByProduct[id] || 1;
+            const idValues = idValuesByGame[game.id] || {};
+            const idSummary = game.idFields.map(f => `${f.label}: ${idValues[f.key] || ''}`).join(', ');
+            const cartItemId = `topup-${game.id}-${product.id}`;
+            const cartItemName = `${game.name} — ${product.name} (${idSummary})`;
+
+            if (typeof window.addCustomCartItem === 'function') {
+                const ok = window.addCustomCartItem({ id: cartItemId, name: cartItemName, price: product.price, qty: qty });
+                if (ok && window.showToast) {
+                    window.showToast(`✅ ${product.name} (${qty} ədəd) səbətə əlavə olundu!`, 'success');
+                }
+            }
+        }
+    });
+
+    function renderAll() {
+        renderGameList();
+        renderHeaderAndIdFields();
+        renderProductGrid();
+    }
+
+    renderAll();
+})();
+</script>
+
+</body>
+</html>
